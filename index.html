@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Super Auto Pets Achivements Tracker</title>
+    <style>
+        @font-face {
+            font-family: 'Noto Color Emoji';
+            src: url(https://raw.githack.com/googlefonts/noto-emoji/main/fonts/NotoColorEmoji.ttf);
+        }
+
+        body {
+            font-family: 'Segoe UI';
+            background-image: url("background.png");
+            user-select: none;
+            height: 100%;
+            margin: 18px;
+        }
+
+        #cards {
+            display: flex;
+            flex-flow: row wrap;
+            background-repeat: repeat;
+            row-gap: 18px;
+            column-gap: 18px;
+            width: 100%;
+        }
+
+        #tags {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            background-repeat: repeat;
+            row-gap: 27px;
+            column-gap: 10px;
+            margin: 2vh 0px;
+            justify-content: center;
+        }
+
+        .tag {
+            box-sizing: border-box;
+            padding: 8px;
+            background-color: hsl(25, 100%, 50%, 1.000);
+            border: 3px solid black;
+            outline: 3px solid white;
+            color: rgb(101, 31, 0);
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"]:checked + .tag {
+            background-color: hsl(25, 100%, 50%, 0.800);
+        }
+
+        .card {
+            position: relative;
+            display: inline;
+            background-color: rgb(0, 17, 36);
+            height: 104px;
+            width: 104px;
+            border-radius: 10px;
+        }
+
+        .card.incomplete {
+            border: 4px solid rgba(255, 255, 255, 0);
+        }
+
+        .card.mastered {
+            border: 4px solid rgba(248, 211, 0, 0.671);
+        }
+
+        .card.complete {
+            border: 4px solid rgba(255, 255, 255, 0.514);
+        }
+
+        .card-image {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .card-emoji {
+            font-family: 'Noto Color Emoji';
+            font-size: 45px;
+            padding-top: 9px;
+        }
+
+        .name {
+            text-align: center;
+            width: 100%;
+            font-family: "Comic Sans MS";
+            font-size: 16px;
+            color: white;
+        }
+
+        .card-image .card-tooltip {
+            visibility: hidden;
+            width: 94px;
+            top: 100%;
+            left: 50%;
+            margin-left: -57px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            padding: 10px;
+        }
+
+        .card-image .card-tooltip::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+        }
+
+        .card-image:hover .card-tooltip {
+            visibility: visible;
+        }
+
+        .tier {
+            display: inline-block;
+            font-size: 36px;
+            position: absolute;
+            right: 0;
+            top: -13px;
+            font-family: 'Noto Color Emoji';
+            color: rgba(248, 248, 248, 0.466);
+        }
+
+        .packs {
+            position: absolute;
+            bottom: 0px;
+        }
+
+        .pack {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 15px;
+            margin: 0px 2px 0px 2px;
+        }
+
+        .pack1 {
+            background-color: rgba(213, 235, 69, 0.30);
+        }
+
+        .pack2 {
+            background-color: rgba(236, 173, 125, 0.30);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="tags">
+        <div><input onchange="view()" type="checkbox" hidden id="tag-pack1"     ><label for="tag-pack1"      class="tag">Pack 1      </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-pack2"     ><label for="tag-pack2"      class="tag">Pack 2      </label></div><div style="margin-right: 10px"></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-incomplete"><label for="tag-incomplete" class="tag">Not complete</label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-complete"  ><label for="tag-complete"   class="tag">Complete    </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-mastered"  ><label for="tag-mastered"   class="tag">Mastered    </label></div><div style="margin-right: 10px"></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-tier1"     ><label for="tag-tier1"      class="tag">Tier 1      </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-tier2"     ><label for="tag-tier2"      class="tag">Tier 2      </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-tier3"     ><label for="tag-tier3"      class="tag">Tier 3      </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-tier4"     ><label for="tag-tier4"      class="tag">Tier 4      </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-tier5"     ><label for="tag-tier5"      class="tag">Tier 5      </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="tag-tier6"     ><label for="tag-tier6"      class="tag">Tier 6      </label></div><div style="margin-right: 10px"></div>
+        <div><input onchange="view()" type="checkbox" hidden id="sort-tier"     ><label for="sort-tier"      class="tag">By tier     </label></div>
+        <div><input onchange="view()" type="checkbox" hidden id="sort-type"     ><label for="sort-type"      class="tag">By sort     </label></div>
+    </div>
+    <div id="cards"></div>
+    <script>
+        let data = null
+
+        async function view() {
+            const tagTypes = [
+                ["tag-pack1","tag-pack2"],
+                ["tag-incomplete","tag-complete","tag-mastered"],
+                ["tag-tier1","tag-tier2","tag-tier3","tag-tier4","tag-tier5","tag-tier6"]
+            ]
+
+            const boxes = document.querySelectorAll('input[type="checkbox"]')
+
+            if(data == null) {
+                data = await fetch('https://superauto.pet/api.json').then(e => e.json());
+
+                boxes.forEach(b => document.getElementById(b.id).checked = localStorage.getItem(b.id) == "true")
+            }
+
+            boxes.forEach(b => localStorage.setItem(b.id, b.checked))
+
+            const pets = data.pets;
+
+            const activeTags = [...tags.getElementsByTagName('input')].filter(checkbox => checkbox.checked).map(checkbox => checkbox.id)
+
+            const allPets = Object.values(pets);
+
+            const statuses = ['incomplete', 'complete', 'mastered']
+            const tiers = [1, 2, 3, 4, 5, 6, 'Summoned', 'Sloth']
+
+            const sortType    = document.getElementById('sort-type').checked ? 1 : 0
+            const sortTier    = document.getElementById('sort-tier').checked ? 1 : 0
+            const pack1Select = document.getElementById('tag-pack1').checked
+            const pack2Select = document.getElementById('tag-pack2').checked
+
+            let selectedCards =
+                allPets.filter(c => c.name != 'Butterfly' && c.name != 'Dirty Rat')
+                       .map(c => (status => ({ ...c,
+                          'status': status,
+                          'hidden': c.tier == 'Summoned' || c.name == 'Sloth',
+                          'tags': [ c.packs.includes('StandardPack')   ? ['pack1'] : []
+                                  , c.packs.includes('ExpansionPack1') ? ['pack2'] : []
+                                  , status
+                                  , tiers.flatMap(i => c.tier == i ? [`tier${i}`] : [])
+                                  ].flat().map(e => `tag-${e}`)
+                          }))(localStorage.getItem(c.id) || 'incomplete'))
+                       .filter(c => tagTypes.every(tagType => (ts => ts.length == 0 || ts.some(t => c.tags.includes(t)))
+                                                              (tagType.filter(_ => activeTags.includes(_)))))
+                       .filter(c => !c.hidden || c.status != 'incomplete' || pack1Select && pack2Select)
+
+            selectedCards.sort((a, b) =>
+                  sortType * 2**8 * Math.sign(statuses.indexOf(a.status) - statuses.indexOf(b.status))
+                + sortTier * 2**6 * Math.sign(tiers.indexOf(a.tier) - tiers.indexOf(b.tier))
+                +            2**4 * Math.sign((a.name == 'Sloth')    - (b.name == 'Sloth'))
+                +            2**2 * Math.sign((a.tier == 'Summoned') - (b.tier == 'Summoned'))
+                + Math.sign(a.name.localeCompare(b.name)));
+
+            const cardsElements = selectedCards.map(pet => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+
+                const pack = {
+                    'tag-pack1': `<span class="pack pack1"></span>`,
+                    'tag-pack2': `<span class="pack pack2"></span>`,
+                }
+                const packs = pet.tags.map(t => pack[t] || '').join('');
+
+                const addPeriod = s => s + (s[s.length - 1].match(/[.!?]/) ? '' : '.')
+
+                card.innerHTML =
+                    `
+                        <span class='card-image'>
+                            <div class="card-emoji">${pet.image.unicodeCodePoint}</div>
+                            <span class='card-tooltip'>${addPeriod(pet.level1Ability?.description || pet.notes || 'No ability.')}</span>
+                        </span>
+                        <div class="card-content">
+                            <div class="name">${pet.name}</div>
+                            <div class="packs">${packs}</div>
+                            <div class="tier">${Number.isInteger(pet.tier) ? ["⚀","⚁","⚂","⚃","⚄","⚅"][pet.tier-1] : ""}</div>
+                        </div>
+                    `;
+
+                const changeStatus = status => statuses[(statuses.indexOf(status) + 1) % statuses.length]
+
+                const updateStatus = transition => () => {
+                    card.classList.remove(pet.status);
+                    pet.status = transition(pet.status)
+                    localStorage.setItem(pet.id, pet.status);
+                    card.classList.add(pet.status);
+                }
+                card.onmousedown = updateStatus(changeStatus)
+                updateStatus(_ => _)()
+                return card
+            });
+            cards.replaceChildren(...cardsElements)
+        }
+        view()
+    </script>
+</body>
+</html>
